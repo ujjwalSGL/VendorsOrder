@@ -1,5 +1,13 @@
+import BuyerDetails from "./pages/BuyersDetails";
+import OrderDetails from "./pages/OrderDetails";
+
 function App() {
-  return <div className="text-2xl font-bold">App</div>;
+  return (
+    <div>
+      <BuyerDetails />
+      <OrderDetails />
+    </div>
+  );
 }
 
 export default App;
