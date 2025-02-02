@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Card } from "@/components/ui/card";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -118,7 +117,7 @@ function BuyerDetails({ nextStep }: any) {
   const [address, setAddress] = useState("");
   const [country, setCountry] = useState("");
   const [countryState, setCountryState] = useState("");
-  const [addressSame, setAddressSame] = useState(true);
+  const [addressSame, setAddressSame] = useState(false);
 
   const handleBuyerDetails = (data: BuyerFormType) => {
     console.log(data);
@@ -152,7 +151,7 @@ function BuyerDetails({ nextStep }: any) {
                     <ChevronsUpDown className="w-4 h-4 ml-2 opacity-50 shrink-0" />
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-[300px] p-0">
+                <PopoverContent className="w-full p-0">
                   <Command>
                     <CommandInput placeholder="Search framework..." />
                     <CommandList>

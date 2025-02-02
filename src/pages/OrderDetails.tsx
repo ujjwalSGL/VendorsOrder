@@ -1,10 +1,9 @@
 import SimpleFormField from "@/components/elements/SimpleFormField";
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
-import { Label } from "@/components/ui/label";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { UserCheck, FilePen } from "lucide-react";
+import { UserCheck, FilePen, Plus } from "lucide-react";
 import { useForm } from "react-hook-form";
 import z from "zod";
 
@@ -48,8 +47,8 @@ function OrderDetails({ nextStep, prevStep }: OrderDetailsProps) {
     SKU: "",
     HSN: "",
     Qty: 1,
-    unitPrice: 0.0,
-    IGST: 0.0,
+    unitPrice: 0,
+    IGST: 0,
   };
   const orderDetailsForm = useForm<OrderDetailsType>({
     resolver: zodResolver(orderDetailsSchema),
@@ -59,6 +58,8 @@ function OrderDetails({ nextStep, prevStep }: OrderDetailsProps) {
     console.log(data);
     localStorage.setItem("OrderDetails", JSON.stringify(data));
   };
+
+  const AddItemDetails = () => {};
   return (
     <div className="flex justify-between w-full gap-4">
       <div className="w-full">
@@ -200,7 +201,7 @@ function OrderDetails({ nextStep, prevStep }: OrderDetailsProps) {
               </div>
               <div>
                 <h1 className="mt-8 font-bold">Item Details</h1>
-                <div className="gap-4 mt-4 lg:grid lg:grid-cols-4">
+                <div className="gap-4 mt-4 lg:grid lg:grid-cols-6">
                   <SimpleFormField
                     form={orderDetailsForm}
                     label="Product Name"
@@ -255,6 +256,14 @@ function OrderDetails({ nextStep, prevStep }: OrderDetailsProps) {
                     placeholder="Enter IGST..."
                   />
                 </div>
+                <Button
+                  variant={"secondary"}
+                  className="mt-5"
+                  onClick={AddItemDetails}
+                >
+                  <Plus />
+                  Add
+                </Button>
               </div>
               <div className="flex justify-between mt-10">
                 <Button onClick={prevStep}>Previous</Button>
