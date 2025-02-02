@@ -118,7 +118,7 @@ function BuyerDetails({ nextStep }: any) {
   const [address, setAddress] = useState("");
   const [country, setCountry] = useState("");
   const [countryState, setCountryState] = useState("");
-  const [addressSame, setAddressSame] = useState(false);
+  const [addressSame, setAddressSame] = useState(true);
 
   const handleBuyerDetails = (data: BuyerFormType) => {
     console.log(data);
@@ -129,8 +129,7 @@ function BuyerDetails({ nextStep }: any) {
   };
   return (
     <div className="flex justify-between w-full gap-4">
-      <Card className="hidden m-4 lg:w-1/4 lg:block"></Card>
-      <Card className="w-full p-6 m-4 lg:w-3/4">
+      <div className="w-full">
         <Form {...buyersDetailsForm}>
           <form onSubmit={buyersDetailsForm.handleSubmit(handleBuyerDetails)}>
             <h1 className="font-bold">
@@ -575,7 +574,8 @@ function BuyerDetails({ nextStep }: any) {
               <div className="flex justify-end pt-4">
                 <Button
                   type="submit"
-                  onClick={buyersDetailsForm.handleSubmit(handleBuyerDetails)}
+                  // onClick={buyersDetailsForm.handleSubmit(handleBuyerDetails)}
+                  onClick={nextStep}
                 >
                   Continue
                 </Button>
@@ -583,7 +583,7 @@ function BuyerDetails({ nextStep }: any) {
             </div>
           </form>
         </Form>
-      </Card>
+      </div>
     </div>
   );
 }

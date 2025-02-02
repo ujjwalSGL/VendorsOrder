@@ -61,8 +61,7 @@ function OrderDetails({ nextStep, prevStep }: OrderDetailsProps) {
   };
   return (
     <div className="flex justify-between w-full gap-4">
-      <Card className="flex justify-between w-1/4 gap-4 p-6 m-4"></Card>
-      <Card className="flex justify-between w-3/4 gap-4 p-6 m-4">
+      <div className="w-full">
         <Form {...orderDetailsForm}>
           <form onSubmit={orderDetailsForm.handleSubmit(handleOrderDetails)}>
             <div>
@@ -264,7 +263,7 @@ function OrderDetails({ nextStep, prevStep }: OrderDetailsProps) {
             </div>
           </form>
         </Form>
-      </Card>
+      </div>
     </div>
   );
 }

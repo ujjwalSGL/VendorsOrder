@@ -5,6 +5,7 @@ import BuyerDetails from "./BuyersDetails";
 import OrderDetails from "./OrderDetails";
 import ShippingPartner from "./ShippingPartner";
 import PlaceOrder from "./PlaceOrder";
+
 export default function Stepper() {
   const [step, setStep] = useState(1);
 
@@ -28,9 +29,8 @@ export default function Stepper() {
   };
 
   return (
-    <div className="flex gap-8 p-6 max-w-[1200px] mx-auto">
-      {/* Vertical Stepper */}
-      <div className="w-48 shrink-0">
+    <div className="gap-6 p-6 mx-auto lg:flex">
+      <Card className="flex flex-row justify-center w-full p-6 lg:w-1/4 lg:flex-col">
         {steps.map((stepItem) => (
           <div
             key={stepItem.id}
@@ -53,10 +53,9 @@ export default function Stepper() {
             <span className="text-sm font-medium mt-1.5">{stepItem.label}</span>
           </div>
         ))}
-      </div>
+      </Card>
 
-      {/* Content Area */}
-      <Card className="flex-1 p-6">
+      <Card className="w-full p-6 lg:w-3/4">
         {step === 1 && <BuyerDetails nextStep={nextStep} />}
         {step === 2 && <OrderDetails nextStep={nextStep} prevStep={prevStep} />}
         {step === 3 && (
