@@ -55,11 +55,96 @@ export default function SimpleFormField({
                   </span>
                 </div>
               </FormControl>
+              <FormMessage className="text-xs" />
+            </FormItem>
+          )}
+        />
+      );
+    case "calender":
+      return (
+        <FormField
+          control={form.control}
+          name={name}
+          render={({ field }) => (
+            <FormItem className={className}>
+              <FormLabel className="text-black">
+                {label} {required && <Required />}
+              </FormLabel>
+              <FormControl>
+                <div className="flex">
+                  <Input
+                    type="number"
+                    {...field}
+                    placeholder={placeholder}
+                    className="w-full rounded-r-none"
+                    disabled={disabled}
+                  />
+                  <span className="flex items-center justify-center py-1.5 px-2 text-sm border rounded-r-sm bg-slate-100">
+                    {valueType}
+                  </span>
+                </div>
+              </FormControl>
+              <FormMessage className="text-xs" />
+            </FormItem>
+          )}
+        />
+      );
+    case "select":
+      return (
+        <FormField
+          control={form.control}
+          name={name}
+          render={({ field }) => (
+            <FormItem className={className}>
+              <FormLabel>{label}</FormLabel>
+              {/* <Select
+                onValueChange={field.onChange}
+                defaultValue={field.value.toString()}
+              >
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Class" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {classList.map((item: IClass) => (
+                    <SelectItem
+                      value={String(item.class_id)}
+                      key={item.class_id}
+                    >
+                      {item.classLabel}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select> */}
               <FormMessage />
             </FormItem>
           )}
         />
       );
+    default: {
+      <FormField
+        control={form.control}
+        name={name}
+        render={({ field }) => (
+          <FormItem className={className}>
+            <FormLabel className="text-black">
+              {label} {required && <Required />}
+            </FormLabel>
+            <FormControl>
+              <Input
+                type={type}
+                {...field}
+                placeholder={placeholder}
+                className="w-full"
+                disabled={disabled}
+              />
+            </FormControl>
+            <FormMessage className="text-xs" />
+          </FormItem>
+        )}
+      />;
+    }
   }
   return (
     <FormField
@@ -79,7 +164,7 @@ export default function SimpleFormField({
               disabled={disabled}
             />
           </FormControl>
-          <FormMessage />
+          <FormMessage className="text-xs" />
         </FormItem>
       )}
     />

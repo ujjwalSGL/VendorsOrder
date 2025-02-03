@@ -42,13 +42,13 @@ export default function Stepper() {
           >
             <div
               className={cn(
-                "w-8 h-8 rounded-md flex items-center justify-center shrink-0",
+                "w-8 h-8 rounded-md flex items-center justify-center",
                 stepItem.id <= step
                   ? "bg-blue-600 text-white"
                   : "bg-gray-100 text-gray-600"
               )}
             >
-              {stepItem.id < step ? <Check /> : stepItem.id}
+              {stepItem.id < step ? <Check size={16} /> : stepItem.id}
             </div>
             <span className="text-sm font-medium mt-1.5">{stepItem.label}</span>
           </div>

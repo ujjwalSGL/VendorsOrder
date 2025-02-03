@@ -40,6 +40,7 @@ const buyerFormSchema = z.object({
     .string()
     .min(1, { message: "The customer mobile number is required." })
     .max(20),
+  alternateMobileNumber: z.string().max(20),
   email: z
     .string()
     .nonempty({ message: "The email is required." })
@@ -48,6 +49,7 @@ const buyerFormSchema = z.object({
     .string()
     .nonempty({ message: "The customer shipping address is required." })
     .max(100),
+  address2: z.string().max(100),
   landmark: z
     .string()
     .nonempty({
@@ -86,6 +88,18 @@ const buyerFormSchema = z.object({
     .string()
     .nonempty({ message: "The customer billing city is required." })
     .max(25),
+  billingFirstName: z
+    .string()
+    .nonempty({ message: "The customer shipping first name is required." })
+    .max(25),
+  billingLastName: z
+    .string()
+    .nonempty({ message: "The customer shipping first name is required." })
+    .max(25),
+  billingMobileNumber: z
+    .string()
+    .min(1, { message: "The customer mobile number is required." })
+    .max(20),
 });
 
 type BuyerFormType = z.infer<typeof buyerFormSchema>;
@@ -198,7 +212,7 @@ function BuyerDetails({ nextStep }: any) {
               </Popover>
             </div>
             <h1 className="mt-5 font-bold">Buyer Shipping Details</h1>
-            <div className="mt-8 space-y-4 text-sm">
+            <div className="mt-4 space-y-4 text-sm">
               <div className="gap-4 space-y-2 lg:grid lg:grid-cols-3">
                 <SimpleFormField
                   form={buyersDetailsForm}
@@ -207,7 +221,7 @@ function BuyerDetails({ nextStep }: any) {
                   required
                   name="firstName"
                   className="lg:mt-2"
-                  placeholder="Type first name here . . ."
+                  placeholder="First name . . ."
                 />
                 <SimpleFormField
                   form={buyersDetailsForm}
@@ -215,7 +229,7 @@ function BuyerDetails({ nextStep }: any) {
                   type="text"
                   required
                   name="lastName"
-                  placeholder="Type last name here . . ."
+                  placeholder="Last name . . ."
                 />
                 <SimpleFormField
                   form={buyersDetailsForm}
