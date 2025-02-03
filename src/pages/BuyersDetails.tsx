@@ -56,14 +56,14 @@ const buyerFormSchema = z.object({
     .max(100),
   pinCode: z
     .string()
-    .min(1, { message: "The customer shipping postcode is required." })
+    .min(1, { message: "The customer shipping pincode is required." })
     .max(8),
   city: z
     .string()
     .nonempty({ message: "The customer shipping city is required." })
     .max(25),
   houseNo: z
-    .number({
+    .string({
       message: "The customer billing address house number is required.",
     })
     .min(1, {
@@ -77,6 +77,14 @@ const buyerFormSchema = z.object({
   locality: z
     .string()
     .nonempty({ message: "The customer billing locality is required." })
+    .max(25),
+  billingPinCode: z
+    .string()
+    .min(1, { message: "The customer billing pincode is required." })
+    .max(8),
+  billingCity: z
+    .string()
+    .nonempty({ message: "The customer billing city is required." })
     .max(25),
 });
 
@@ -97,13 +105,16 @@ function BuyerDetails({ nextStep }: any) {
     country: "",
     alternateMobileNumber: "",
     state: "",
-    houseNo: 0,
+    houseNo: "",
     streetName: "",
     locality: "",
     addressSame: false,
     billingFirstName: "",
     billingLastName: "",
     billingMobileNumber: "",
+    billingPinCode: "",
+    billingCity: "",
+    billingCountry: "",
   };
 
   const buyersDetailsForm = useForm<BuyerFormType>({
@@ -117,11 +128,12 @@ function BuyerDetails({ nextStep }: any) {
   const [address, setAddress] = useState("");
   const [country, setCountry] = useState("");
   const [countryState, setCountryState] = useState("");
-  const [addressSame, setAddressSame] = useState(false);
+  const [addressSame, setAddressSame] = useState(true);
 
   const handleBuyerDetails = (data: BuyerFormType) => {
     console.log(data);
     localStorage.setItem("buyerDetails", JSON.stringify(data));
+    nextStep();
   };
   const handleAddressCheckbox = () => {
     setAddressSame(!addressSame);
@@ -141,7 +153,7 @@ function BuyerDetails({ nextStep }: any) {
                     variant="outline"
                     role="combobox"
                     aria-expanded={openAddress}
-                    className="justify-between w-full bg-slate-100 hover:bg-slate-200"
+                    className="justify-between w-full font-medium text-gray-400 bg-slate-50"
                   >
                     {address
                       ? addressFrameworks.find(
@@ -186,15 +198,16 @@ function BuyerDetails({ nextStep }: any) {
               </Popover>
             </div>
             <h1 className="mt-5 font-bold">Buyer Shipping Details</h1>
-            <div className="mt-8 space-y-6 text-sm">
-              <div className="gap-4 lg:grid lg:grid-cols-3">
+            <div className="mt-8 space-y-4 text-sm">
+              <div className="gap-4 space-y-2 lg:grid lg:grid-cols-3">
                 <SimpleFormField
                   form={buyersDetailsForm}
                   label="First name"
                   type="text"
                   required
                   name="firstName"
-                  placeholder="Enter here . . ."
+                  className="lg:mt-2"
+                  placeholder="Type first name here . . ."
                 />
                 <SimpleFormField
                   form={buyersDetailsForm}
@@ -202,7 +215,7 @@ function BuyerDetails({ nextStep }: any) {
                   type="text"
                   required
                   name="lastName"
-                  placeholder="Enter here . . ."
+                  placeholder="Type last name here . . ."
                 />
                 <SimpleFormField
                   form={buyersDetailsForm}
@@ -210,16 +223,17 @@ function BuyerDetails({ nextStep }: any) {
                   type="number"
                   required
                   name="mobileNumber"
-                  placeholder="Enter here . . ."
+                  placeholder="Type number . . ."
                 />
               </div>
-              <div className="gap-4 lg:grid lg:grid-cols-2">
+              <div className="w-full gap-4 mt-2 space-y-2 lg:flex">
                 <SimpleFormField
                   form={buyersDetailsForm}
                   label="Alternate Mobile No."
                   type="number"
                   name="alternateMobileNumber"
-                  placeholder="Enter here . . ."
+                  className="lg:w-2/6 lg:mt-2"
+                  placeholder="Type number . . ."
                 />
                 <SimpleFormField
                   form={buyersDetailsForm}
@@ -227,10 +241,11 @@ function BuyerDetails({ nextStep }: any) {
                   type="text"
                   required
                   name="email"
-                  placeholder="Enter here . . ."
+                  className="lg:w-4/6"
+                  placeholder="Type mail id . . ."
                 />
               </div>
-              <div className="space-y-1">
+              <div className="mt-2 space-y-2">
                 <Label htmlFor="country">Country {required()}</Label>
                 <Popover open={openCountry} onOpenChange={setOpenCountry}>
                   <PopoverTrigger asChild>
@@ -238,7 +253,7 @@ function BuyerDetails({ nextStep }: any) {
                       variant="outline"
                       role="combobox"
                       aria-expanded={openCountry}
-                      className="justify-between w-full bg-slate-100 hover:bg-slate-200"
+                      className="justify-between w-full font-medium text-gray-400 bg-slate-50"
                     >
                       {country
                         ? countryFrameworks.find(
@@ -282,14 +297,15 @@ function BuyerDetails({ nextStep }: any) {
                   </PopoverContent>
                 </Popover>
               </div>
-              <div className="gap-4 pt-2 lg:grid lg:grid-cols-2">
+              <div className="gap-4 mt-2 space-y-2 lg:grid lg:grid-cols-2">
                 <SimpleFormField
                   form={buyersDetailsForm}
                   label="Address 1"
                   type="text"
                   required
                   name="address1"
-                  placeholder="Enter here . . ."
+                  className="lg:mt-2"
+                  placeholder="Type address . . ."
                 />
                 <SimpleFormField
                   form={buyersDetailsForm}
@@ -297,24 +313,27 @@ function BuyerDetails({ nextStep }: any) {
                   type="text"
                   required
                   name="landmark"
-                  placeholder="Enter here . . ."
+                  placeholder="Type landmark . . ."
                 />
               </div>
-              <SimpleFormField
-                form={buyersDetailsForm}
-                label="Address 2"
-                type="text"
-                name="address2"
-                placeholder="Enter here . . ."
-              />
-              <div className="gap-4 lg:grid lg:grid-cols-3">
+              <div className="mt-2">
+                <SimpleFormField
+                  form={buyersDetailsForm}
+                  label="Address 2"
+                  type="text"
+                  name="address2"
+                  placeholder="Type address . . ."
+                />
+              </div>
+              <div className="gap-4 mt-2 space-y-2 lg:grid lg:grid-cols-3">
                 <SimpleFormField
                   form={buyersDetailsForm}
                   label="Pincode"
                   type="number"
                   required
                   name="pinCode"
-                  placeholder="Enter here . . ."
+                  className="lg:mt-2"
+                  placeholder="Type pincode . . ."
                 />
                 <SimpleFormField
                   form={buyersDetailsForm}
@@ -322,23 +341,23 @@ function BuyerDetails({ nextStep }: any) {
                   type="text"
                   required
                   name="city"
-                  placeholder="Enter here . . ."
+                  placeholder="Type city . . ."
                 />
-                <div className="mt-2">
-                  <Label htmlFor="country">Country {required()}</Label>
+                <div className="mt-2 space-y-2">
+                  <Label htmlFor="country">State {required()}</Label>
                   <Popover open={openState} onOpenChange={setOpenState}>
                     <PopoverTrigger asChild>
                       <Button
                         variant="outline"
                         role="combobox"
                         aria-expanded={openState}
-                        className="justify-between w-full bg-slate-100 hover:bg-slate-200"
+                        className="justify-between w-full font-medium text-gray-400 bg-slate-50"
                       >
                         {countryState
                           ? countryStateFrameWork.find(
                               (framework) => framework.value === countryState
                             )?.label
-                          : "Select Country"}
+                          : "Select state"}
                         <ChevronsUpDown className="w-4 h-4 ml-2 opacity-50 shrink-0" />
                       </Button>
                     </PopoverTrigger>
@@ -379,7 +398,7 @@ function BuyerDetails({ nextStep }: any) {
                   </Popover>
                 </div>
               </div>
-              <div className="flex items-center pt-3 space-x-2">
+              <div className="flex items-center pt-3 my-6 space-x-2">
                 <Checkbox id="terms" onClick={handleAddressCheckbox} />
                 <Label htmlFor="terms" className="text-sm ">
                   Shipping & Billing Address are same.
@@ -387,15 +406,16 @@ function BuyerDetails({ nextStep }: any) {
               </div>
               <div>
                 {addressSame == true && (
-                  <div className="space-y-6">
-                    <div className="gap-4 lg:grid lg:grid-cols-3">
+                  <div>
+                    <div className="gap-4 space-y-2 lg:grid lg:grid-cols-3">
                       <SimpleFormField
                         form={buyersDetailsForm}
                         label="First name"
                         type="text"
                         required
                         name="billingFirstName"
-                        placeholder="Enter here . . ."
+                        className="mt-2"
+                        placeholder="Type last name . . ."
                       />
                       <SimpleFormField
                         form={buyersDetailsForm}
@@ -403,7 +423,7 @@ function BuyerDetails({ nextStep }: any) {
                         type="text"
                         required
                         name="billingLastName"
-                        placeholder="Enter here . . ."
+                        placeholder="Type first name . . ."
                       />
                       <SimpleFormField
                         form={buyersDetailsForm}
@@ -411,10 +431,10 @@ function BuyerDetails({ nextStep }: any) {
                         type="number"
                         required
                         name="billingMobileNumber"
-                        placeholder="Enter here . . ."
+                        placeholder="Type mobile number . . ."
                       />
                     </div>
-                    <div className="mt-8">
+                    <div className="mt-2 space-y-2">
                       <Label htmlFor="country">Country {required()}</Label>
                       <Popover open={openCountry} onOpenChange={setOpenCountry}>
                         <PopoverTrigger asChild>
@@ -422,7 +442,7 @@ function BuyerDetails({ nextStep }: any) {
                             variant="outline"
                             role="combobox"
                             aria-expanded={openCountry}
-                            className="justify-between w-full bg-slate-100 hover:bg-slate-200"
+                            className="justify-between w-full font-medium text-gray-400 bg-slate-50"
                           >
                             {country
                               ? countryFrameworks.find(
@@ -468,14 +488,15 @@ function BuyerDetails({ nextStep }: any) {
                         </PopoverContent>
                       </Popover>
                     </div>
-                    <div className="gap-4 pt-2 lg:grid lg:grid-cols-2">
+                    <div className="gap-4 mt-2 space-y-2 lg:grid lg:grid-cols-2">
                       <SimpleFormField
                         form={buyersDetailsForm}
                         label="House no."
                         type="text"
                         required
                         name="houseNo"
-                        placeholder="Enter here . . ."
+                        placeholder="Type house number . . ."
+                        className="mt-2"
                       />
                       <SimpleFormField
                         form={buyersDetailsForm}
@@ -483,50 +504,53 @@ function BuyerDetails({ nextStep }: any) {
                         type="text"
                         required
                         name="streetName"
-                        placeholder="Enter here . . ."
+                        placeholder="Type street name . . ."
                       />
                     </div>
-                    <SimpleFormField
-                      form={buyersDetailsForm}
-                      label="Locality"
-                      type="text"
-                      required
-                      name="locality"
-                      placeholder="Enter here . . ."
-                    />
-                    <div className="gap-4 lg:grid lg:grid-cols-3">
+                    <div className="mt-2">
+                      <SimpleFormField
+                        form={buyersDetailsForm}
+                        label="Locality"
+                        type="text"
+                        required
+                        name="locality"
+                        placeholder="Type locality . . ."
+                      />
+                    </div>
+                    <div className="gap-4 mt-2 space-y-2 lg:grid lg:grid-cols-3">
                       <SimpleFormField
                         form={buyersDetailsForm}
                         label="Pincode"
                         type="number"
                         required
-                        name="pinCode"
-                        placeholder="Enter here . . ."
+                        name="billingPinCode"
+                        placeholder="Type pincode . . ."
+                        className="mt-2"
                       />
                       <SimpleFormField
                         form={buyersDetailsForm}
                         label="City"
                         type="text"
                         required
-                        name="city"
-                        placeholder="Enter here . . ."
+                        name="billingCity"
+                        placeholder="Type city . . ."
                       />
-                      <div className="mt-2">
-                        <Label htmlFor="country">Country {required()}</Label>
+                      <div className="mt-2 space-y-2">
+                        <Label htmlFor="state">State {required()}</Label>
                         <Popover open={openState} onOpenChange={setOpenState}>
                           <PopoverTrigger asChild>
                             <Button
                               variant="outline"
                               role="combobox"
                               aria-expanded={openState}
-                              className="justify-between w-full bg-slate-100 hover:bg-slate-200"
+                              className="justify-between w-full font-medium text-gray-400 bg-slate-50"
                             >
                               {countryState
                                 ? countryStateFrameWork.find(
                                     (framework) =>
                                       framework.value === countryState
                                   )?.label
-                                : "Select Country"}
+                                : "Select State"}
                               <ChevronsUpDown className="w-4 h-4 ml-2 opacity-50 shrink-0" />
                             </Button>
                           </PopoverTrigger>
@@ -572,9 +596,9 @@ function BuyerDetails({ nextStep }: any) {
               </div>
               <div className="flex justify-end pt-4">
                 <Button
+                  variant={"shipping"}
                   type="submit"
-                  // onClick={buyersDetailsForm.handleSubmit(handleBuyerDetails)}
-                  onClick={nextStep}
+                  onClick={buyersDetailsForm.handleSubmit(handleBuyerDetails)}
                 >
                   Continue
                 </Button>

@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { UserCheck, FilePen, Plus } from "lucide-react";
+import { UserCheck, FilePen, Plus, MoveLeft, Trash } from "lucide-react";
 import { useForm } from "react-hook-form";
 import z from "zod";
 
@@ -13,42 +13,42 @@ interface OrderDetailsProps {
 }
 
 const orderDetailsSchema = z.object({
-  weight: z.number().min(1, "Weight is required"),
-  length: z.number().min(1, "Length is required"),
-  height: z.number().min(1, "Height is required"),
-  breath: z.number().min(1, "Breath is required"),
-  invoiceNumber: z.string().min(1, "Invoice number is required"),
-  invoiceDate: z.string().min(1, "Invoice date is required"),
+  weight: z.string().min(1, "The package weight is required."),
+  length: z.string().min(1, "The package length is required."),
+  height: z.string().min(1, "The package breadth is required."),
+  breath: z.string().min(1, "The package height is required."),
+  invoiceNumber: z.string().min(1, "The invoice number is required."),
+  invoiceDate: z.coerce.date(),
   invoiceCurrency: z.string().min(1, "Invoice currency is required"),
   orderId: z.string().min(1, "Order ID is required"),
   IOSSNumber: z.string().optional(),
-  productName: z.string().min(1, "Product name is required"),
+  productName: z.string().min(1, "Product Title is required."),
   SKU: z.string().min(1, "SKU is required"),
-  HSN: z.string().min(1, "HSN is required"),
-  Qty: z.number().min(1, "Quantity should be at least 1"),
-  unitPrice: z.number().min(0, "Unit price must be a positive number"),
-  IGST: z.number().min(0, "IGST must be a positive number"),
+  HSN: z.string().min(8, "8 Digit HSN Required"),
+  Qty: z.string().min(1, "Product Qty is required."),
+  unitPrice: z.string().min(1, "Product Price is required."),
+  IGST: z.string().min(1, "IGST must be a positive number"),
 });
 
 type OrderDetailsType = z.infer<typeof orderDetailsSchema>;
 
 function OrderDetails({ nextStep, prevStep }: OrderDetailsProps) {
   const InitialOrderDetails = {
-    weight: 0,
-    length: 0,
-    height: 0,
-    breath: 0,
+    weight: "",
+    length: "",
+    height: "",
+    breath: "",
     invoiceNumber: "",
-    invoiceDate: new Date().toISOString(),
+    invoiceDate: new Date(),
     invoiceCurrency: "",
     orderId: "",
     IOSSNumber: "",
     productName: "",
     SKU: "",
     HSN: "",
-    Qty: 1,
-    unitPrice: 0,
-    IGST: 0,
+    Qty: "",
+    unitPrice: "",
+    IGST: "",
   };
   const orderDetailsForm = useForm<OrderDetailsType>({
     resolver: zodResolver(orderDetailsSchema),
@@ -57,6 +57,7 @@ function OrderDetails({ nextStep, prevStep }: OrderDetailsProps) {
   const handleOrderDetails = (data: OrderDetailsType) => {
     console.log(data);
     localStorage.setItem("OrderDetails", JSON.stringify(data));
+    nextStep();
   };
 
   const AddItemDetails = () => {};
@@ -82,8 +83,8 @@ function OrderDetails({ nextStep, prevStep }: OrderDetailsProps) {
                   </p>
                 </div>
               </div>
-              <div className="flex gap-6 mt-8">
-                <Card className="flex items-center justify-center gap-2 border border-blue-300 border-dashed rounded-md cursor-pointer bg-blue-50 lg:flex p-7">
+              <div className="gap-2 mt-8 lg:flex">
+                <Card className="items-center gap-2 border-blue-300 border-dashed bg-blue-50 lg:flex p-7">
                   <UserCheck color="blue" />
                   <div>
                     <h1 className="text-sm font-semibold">CSB IV</h1>
@@ -93,8 +94,8 @@ function OrderDetails({ nextStep, prevStep }: OrderDetailsProps) {
                     </p>
                   </div>
                 </Card>
-                <div className="flex items-center justify-center gap-2 border border-dashed rounded-md cursor-pointer hover:border-blue-300 hover:bg-blue-50 lg:flex p-7">
-                  <FilePen className="text-blue-700" />
+                <Card className="items-center gap-2 border-dashed hover:border-blue-300 hover:bg-blue-50 lg:flex p-7">
+                  <FilePen color="blue" />
                   <div>
                     <h1 className="text-sm font-semibold">CSB V</h1>
                     <p className="text-xs text-gray-400 ">
@@ -102,7 +103,7 @@ function OrderDetails({ nextStep, prevStep }: OrderDetailsProps) {
                       ShipGlobal Direct
                     </p>
                   </div>
-                </div>
+                </Card>
               </div>
               <div>
                 <h1 className="mt-8 font-bold">Shipment Details</h1>
@@ -113,54 +114,61 @@ function OrderDetails({ nextStep, prevStep }: OrderDetailsProps) {
                   </span>
                   .
                 </p>
-                <div className="gap-4 mt-4 lg:grid lg:grid-cols-4">
-                  <SimpleFormField
-                    form={orderDetailsForm}
-                    label="Weight"
-                    type="number"
-                    required
-                    name="weight"
-                    placeholder="Enter weight..."
-                  />
+                <div className="gap-4 mt-4 space-y-2 lg:grid lg:grid-cols-4">
+                  <div className="flex">
+                    <SimpleFormField
+                      form={orderDetailsForm}
+                      label="Weight"
+                      type="dimension"
+                      required
+                      name="weight"
+                      className="w-full lg:mt-2"
+                      placeholder="0.0"
+                      valueType="KG"
+                    />
+                  </div>
 
                   <SimpleFormField
                     form={orderDetailsForm}
                     label="Length"
-                    type="number"
+                    type="dimension"
                     required
                     name="length"
-                    placeholder="Enter length..."
+                    placeholder="0"
+                    valueType="CM"
                   />
 
                   <SimpleFormField
                     form={orderDetailsForm}
                     label="Height"
-                    type="number"
+                    type="dimension"
                     required
                     name="height"
-                    placeholder="Enter height..."
+                    placeholder="0"
+                    valueType="CM"
                   />
 
                   <SimpleFormField
                     form={orderDetailsForm}
                     label="Breath"
-                    type="number"
+                    type="dimension"
                     required
                     name="breath"
-                    placeholder="Enter breath..."
+                    placeholder="0"
+                    valueType="CM"
                   />
                 </div>
               </div>
               <div>
                 <h1 className="mt-8 font-bold">Order Details</h1>
-                <div className="gap-4 mt-4 lg:grid lg:grid-cols-4">
+                <div className="gap-4 mt-4 space-y-2 lg:grid lg:grid-cols-4">
                   <SimpleFormField
                     form={orderDetailsForm}
                     label="Invoice Number"
                     type="text"
                     required
                     name="invoiceNumber"
-                    placeholder="Enter invoice number..."
+                    className="lg:mt-2"
                   />
 
                   <SimpleFormField
@@ -169,7 +177,6 @@ function OrderDetails({ nextStep, prevStep }: OrderDetailsProps) {
                     type="date"
                     required
                     name="invoiceDate"
-                    placeholder="Select invoice date..."
                   />
 
                   <SimpleFormField
@@ -178,7 +185,6 @@ function OrderDetails({ nextStep, prevStep }: OrderDetailsProps) {
                     type="text"
                     required
                     name="invoiceCurrency"
-                    placeholder="Enter invoice currency (e.g., USD)..."
                   />
 
                   <SimpleFormField
@@ -187,7 +193,6 @@ function OrderDetails({ nextStep, prevStep }: OrderDetailsProps) {
                     type="text"
                     required
                     name="orderId"
-                    placeholder="Enter order ID..."
                   />
 
                   <SimpleFormField
@@ -195,20 +200,20 @@ function OrderDetails({ nextStep, prevStep }: OrderDetailsProps) {
                     label="IOSS Number"
                     type="text"
                     name="IOSSNumber"
-                    placeholder="Enter IOSS number (if applicable)..."
                   />
                 </div>
               </div>
               <div>
                 <h1 className="mt-8 font-bold">Item Details</h1>
-                <div className="gap-4 mt-4 lg:grid lg:grid-cols-6">
+                <div className="gap-4 mt-4 space-y-2 lg:grid lg:grid-cols-11">
                   <SimpleFormField
                     form={orderDetailsForm}
                     label="Product Name"
                     type="text"
                     required
                     name="productName"
-                    placeholder="Enter product name..."
+                    className="col-span-2 mt-2"
+                    placeholder="Type product name . . ."
                   />
 
                   <SimpleFormField
@@ -217,7 +222,7 @@ function OrderDetails({ nextStep, prevStep }: OrderDetailsProps) {
                     type="text"
                     required
                     name="SKU"
-                    placeholder="Enter SKU..."
+                    placeholder="SKU . . ."
                   />
 
                   <SimpleFormField
@@ -226,7 +231,8 @@ function OrderDetails({ nextStep, prevStep }: OrderDetailsProps) {
                     type="text"
                     required
                     name="HSN"
-                    placeholder="Enter HSN..."
+                    className="col-span-2 "
+                    placeholder="HSN . . ."
                   />
 
                   <SimpleFormField
@@ -235,7 +241,7 @@ function OrderDetails({ nextStep, prevStep }: OrderDetailsProps) {
                     type="number"
                     required
                     name="Qty"
-                    placeholder="Enter quantity..."
+                    placeholder="0"
                   />
 
                   <SimpleFormField
@@ -244,7 +250,8 @@ function OrderDetails({ nextStep, prevStep }: OrderDetailsProps) {
                     type="number"
                     required
                     name="unitPrice"
-                    placeholder="Enter unit price..."
+                    className="col-span-2 "
+                    placeholder="0"
                   />
 
                   <SimpleFormField
@@ -253,11 +260,14 @@ function OrderDetails({ nextStep, prevStep }: OrderDetailsProps) {
                     type="number"
                     required
                     name="IGST"
-                    placeholder="Enter IGST..."
+                    className="col-span-2 "
+                    placeholder="0 %"
                   />
                 </div>
+              </div>
+              <div>
                 <Button
-                  variant={"secondary"}
+                  variant={"secondaryShipping"}
                   className="mt-5"
                   onClick={AddItemDetails}
                 >
@@ -266,8 +276,16 @@ function OrderDetails({ nextStep, prevStep }: OrderDetailsProps) {
                 </Button>
               </div>
               <div className="flex justify-between mt-10">
-                <Button onClick={prevStep}>Previous</Button>
-                <Button onClick={nextStep}>Next</Button>
+                <Button variant="secondaryShipping" onClick={prevStep}>
+                  <MoveLeft />
+                  Back
+                </Button>
+                <Button
+                  variant={"shipping"}
+                  onClick={orderDetailsForm.handleSubmit(handleOrderDetails)}
+                >
+                  Continue
+                </Button>
               </div>
             </div>
           </form>

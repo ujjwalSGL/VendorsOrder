@@ -5,6 +5,7 @@ import BuyerDetails from "./BuyersDetails";
 import OrderDetails from "./OrderDetails";
 import ShippingPartner from "./ShippingPartner";
 import PlaceOrder from "./PlaceOrder";
+import { Check } from "lucide-react";
 
 export default function Stepper() {
   const [step, setStep] = useState(1);
@@ -29,26 +30,25 @@ export default function Stepper() {
   };
 
   return (
-    <div className="gap-6 p-6 mx-auto lg:flex">
-      <Card className="flex flex-row justify-center w-full p-6 lg:w-1/4 lg:flex-col">
+    <div className="gap-6 p-6 gap-y-4 lg:flex">
+      <Card className="flex flex-col justify-center w-full p-6 lg:w-1/4">
         {steps.map((stepItem) => (
           <div
             key={stepItem.id}
             className={cn(
-              "flex items-start gap-3 p-4 cursor-pointer",
-              stepItem.id === step ? "text-blue-600" : "text-gray-500"
+              "flex items-start gap-3 p-4 cursor-pointer font-bold",
+              stepItem.id < step ? "text-gray-400" : "text-black"
             )}
-            onClick={() => setStep(stepItem.id)}
           >
             <div
               className={cn(
-                "w-8 h-8 rounded-full flex items-center justify-center shrink-0",
-                stepItem.id === step
+                "w-8 h-8 rounded-md flex items-center justify-center shrink-0",
+                stepItem.id <= step
                   ? "bg-blue-600 text-white"
                   : "bg-gray-100 text-gray-600"
               )}
             >
-              {stepItem.id}
+              {stepItem.id < step ? <Check /> : stepItem.id}
             </div>
             <span className="text-sm font-medium mt-1.5">{stepItem.label}</span>
           </div>
