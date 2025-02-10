@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
 import { currencyFrameworks, igstFrameworks } from "@/lib/constants";
+import { orderDetailsSchema } from "@/lib/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { UserCheck, FilePen, Plus, MoveLeft, Trash } from "lucide-react";
 import { useForm } from "react-hook-form";
@@ -12,28 +13,6 @@ interface OrderDetailsProps {
   nextStep: () => void;
   prevStep: () => void;
 }
-
-const orderDetailsSchema = z.object({
-  weight: z.coerce.number().min(1, "The package weight is required."),
-  length: z.coerce.number().min(1, "The package length is required."),
-  height: z.coerce.number().min(1, "The package breadth is required."),
-  breath: z.coerce.number().min(1, "The package height is required."),
-  invoiceNumber: z.string().min(1, "The invoice number is required."),
-  invoiceDate: z.coerce.date(),
-  invoiceCurrency: z.string().min(1, "Invoice currency is required"),
-  orderId: z.string().min(1, "Order ID is required"),
-  IOSSNumber: z.string().optional(),
-  itemDetails: z.array(
-    z.object({
-      productName: z.string().min(1, "Product Title is required."),
-      SKU: z.string().min(1, "SKU is required"),
-      HSN: z.string().min(8, "8 Digit HSN Required"),
-      Qty: z.string().min(1, "Product Qty is required."),
-      unitPrice: z.string().min(1, "Product Price is required."),
-      IGST: z.string().min(1, "IGST must be a positive number"),
-    })
-  ),
-});
 
 type OrderDetailsType = z.infer<typeof orderDetailsSchema>;
 
@@ -59,7 +38,6 @@ function OrderDetails({ nextStep, prevStep }: OrderDetailsProps) {
       },
     ],
   };
-
   const orderDetailsForm = useForm<OrderDetailsType>({
     resolver: zodResolver(orderDetailsSchema),
     defaultValues: InitialOrderDetails,

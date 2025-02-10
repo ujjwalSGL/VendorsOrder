@@ -85,7 +85,7 @@ function PlaceOrder({ prevStep }: PlaceOrderProps) {
         <div className="space-y-1">
           <h2 className="text-base font-bold text-gray-400">Billed Weight:</h2>
           <h3 className="font-medium text-gray-900">
-            {orderDetails.weight.toFixed(2)} KG
+            {orderDetails?.weight || ""} KG
           </h3>
         </div>
       </div>
