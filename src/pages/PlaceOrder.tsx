@@ -11,7 +11,7 @@ function PlaceOrder({ prevStep }: PlaceOrderProps) {
   const [orderDetails, setOrderDetails] = useState<any>(null);
   const [buyerDetails, setBuyerDetails] = useState<any>(null);
   const [selectedShippingPartnerDetails, setSelectedShippingPartner] =
-    useState<any>();
+    useState<any>(null);
 
   useEffect(() => {
     const storedOrderDetails = JSON.parse(
@@ -20,21 +20,23 @@ function PlaceOrder({ prevStep }: PlaceOrderProps) {
     const storedBuyerDetails = JSON.parse(
       localStorage.getItem("buyerDetails") || "{}"
     );
-
     const storedSelectedShippingPartner = JSON.parse(
       localStorage.getItem("selectedShippingPartner") || "{}"
     );
-    setSelectedShippingPartner(storedSelectedShippingPartner);
+
     setOrderDetails(storedOrderDetails);
     setBuyerDetails(storedBuyerDetails);
+    setSelectedShippingPartner(storedSelectedShippingPartner);
   }, []);
 
   const handleSubmit = () => {
-    alert("Congratulation! Your order has been Placed");
+    alert("Congratulations! Your order has been placed.");
   };
 
-  const totalPrice = selectedShippingPartnerDetails.price;
-  console.log(totalPrice);
+  const price = parseFloat(selectedShippingPartnerDetails?.price) || 0;
+  const igstValue = parseFloat(orderDetails?.itemDetails?.[0]?.IGST) || 0;
+  const gstPrice = ((price * igstValue) / 100).toFixed(2);
+  const totalPrice = (price + parseFloat(gstPrice)).toFixed(2);
 
   return (
     <div className="space-y-8">
@@ -78,28 +80,27 @@ function PlaceOrder({ prevStep }: PlaceOrderProps) {
         </div>
         <div className="space-y-1">
           <h2 className="text-base font-bold text-gray-400">Shipment Mode</h2>
-          <h3 className="font-medium text-gray-900">
-            {orderDetails?.shipmentMode || "CSB-IV"}
-          </h3>
+          <h3 className="font-medium text-gray-900">"CSB-IV"</h3>
         </div>
         <div className="space-y-1">
           <h2 className="text-base font-bold text-gray-400">Billed Weight:</h2>
-          <h3 className="font-medium text-gray-900">{orderDetails?.weight}</h3>
+          <h3 className="font-medium text-gray-900">
+            {orderDetails.weight.toFixed(2)} KG
+          </h3>
         </div>
       </div>
-
       <Card className="p-6 space-y-4 lg:px-20">
         <div className="flex justify-between text-sm font-medium text-black">
           <span className="text-gray-400">Logistic Fee</span>
-          <span>Rs. {orderDetails?.logisticFee || "6000"}</span>
+          <span>Rs. {price.toFixed(2)}</span>
         </div>
         <div className="flex justify-between text-sm font-medium text-black">
-          <span className="text-gray-400">GST</span>
-          <span>Rs. {"GST"}</span>
+          <span className="text-gray-400">GST ({igstValue}%)</span>
+          <span>Rs. {gstPrice}</span>
         </div>
         <div className="flex justify-between pt-2 text-sm font-medium text-gray-900 border-t">
           <span className="text-gray-400">Total</span>
-          <span>Rs. {orderDetails?.total}</span>
+          <span>Rs. {totalPrice}</span>
         </div>
       </Card>
 
