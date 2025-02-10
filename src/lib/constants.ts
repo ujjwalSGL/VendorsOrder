@@ -22,6 +22,32 @@ export const countryFrameworks = [
     label: "Canada",
   },
 ];
+export const igstFrameworks = [
+  {
+    value: "0",
+    label: "0 %",
+  },
+  {
+    value: "3",
+    label: "3 %",
+  },
+  {
+    value: "5",
+    label: "5 %",
+  },
+  {
+    value: "12",
+    label: "12 %",
+  },
+  {
+    value: "18",
+    label: "18 %",
+  },
+  {
+    value: "28",
+    label: "28 %",
+  },
+];
 
 export const currencyFrameworks = [
   {
@@ -95,7 +121,9 @@ export const buyerFormSchema = z.object({
     .min(1, { message: "The customer mobile number is required." })
     .max(20),
   alternateMobileNumber: z.string().max(20),
-  pickupAddress: z.string() .nonempty({ message: "The pickup address is required." }),
+  pickupAddress: z
+    .string()
+    .nonempty({ message: "The pickup address is required." }),
   email: z
     .string()
     .nonempty({ message: "The email is required." })

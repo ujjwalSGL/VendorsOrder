@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { MoveLeft } from "lucide-react";
@@ -7,45 +8,55 @@ interface ShippingPartnerProps {
   prevStep: () => void;
 }
 
+interface ShippingPartner {
+  id: string;
+  name: string;
+  price: number;
+  transitTime: string;
+  hasDuties?: boolean;
+  recommended?: boolean;
+  document?: boolean;
+}
+
+const shippingPartners: ShippingPartner[] = [
+  {
+    id: "shipglobal",
+    name: "ShipGlobal Direct",
+    price: 6000,
+    transitTime: "12 - 18 Days",
+    recommended: true,
+    document: true,
+  },
+  {
+    id: "ups-promotional",
+    name: "UPS Promotional",
+    price: 12000,
+    transitTime: "4 - 7 Days",
+    hasDuties: true,
+  },
+  {
+    id: "dhl",
+    name: "DHL Express",
+    price: 15000,
+    transitTime: "4 - 7 Days",
+    hasDuties: true,
+  },
+  {
+    id: "ups",
+    name: "UPS",
+    price: 20000,
+    transitTime: "4 - 7 Days",
+    hasDuties: true,
+  },
+];
+
 function ShippingPartner({ nextStep, prevStep }: ShippingPartnerProps) {
-  interface ShippingPartner {
-    id: string;
-    name: string;
-    price: number;
-    transitTime: string;
-    hasDuties?: boolean;
-    isRecommended?: boolean;
-  }
-  const shippingPartner: ShippingPartner[] = [
-    {
-      id: "shipglobal",
-      name: "ShipGlobal Direct",
-      price: 7722,
-      transitTime: "12 - 18 Days",
-      isRecommended: true,
-    },
-    {
-      id: "ups-promotional",
-      name: "UPS Promotional",
-      price: 15362,
-      transitTime: "4 - 7 Days",
-      hasDuties: true,
-    },
-    {
-      id: "dhl",
-      name: "DHL Express",
-      price: 15966,
-      transitTime: "4 - 7 Days",
-      hasDuties: true,
-    },
-    {
-      id: "ups",
-      name: "UPS",
-      price: 19176,
-      transitTime: "4 - 7 Days",
-      hasDuties: true,
-    },
-  ];
+  const [selectedPartner, setSelectedPartner] = useState<string>("");
+
+  const handleSelectPartner = (id: string) => {
+    setSelectedPartner(id);
+  };
+
   return (
     <div className="min-h-screen">
       <h1 className="text-lg font-bold">Select Shipping Partner</h1>
@@ -78,14 +89,27 @@ function ShippingPartner({ nextStep, prevStep }: ShippingPartnerProps) {
         </Card>
       </div>
       <div className="items-center justify-between mt-10 space-y-5">
-        {shippingPartner.map((partner) => (
-          <Card key={partner.id} className="flex gap-5 p-5 border-dashed">
-            <input type="radio" name="shippingPartner" id={partner.id} />
+        {shippingPartners.map((partner) => (
+          <Card
+            key={partner.id}
+            className={`flex gap-5 p-5 border-dashed cursor-pointer ${
+              selectedPartner === partner.id ? "border-blue-500" : ""
+            }`}
+            onClick={() => handleSelectPartner(partner.id)}
+          >
+            <input
+              type="radio"
+              name="shippingPartner"
+              id={partner.id}
+              checked={selectedPartner === partner.id}
+              onChange={() => handleSelectPartner(partner.id)}
+              className="mr-2"
+            />
             <div className="flex items-center justify-between w-full">
               <div>
                 <h1 className="gap-2 font-semibold">
                   {partner.name}
-                  {partner.isRecommended && (
+                  {partner.recommended && (
                     <span className="p-1 ml-2 text-xs font-medium text-green-400 bg-green-100 rounded-md">
                       cheapest
                     </span>
@@ -94,6 +118,11 @@ function ShippingPartner({ nextStep, prevStep }: ShippingPartnerProps) {
                 {partner.hasDuties && (
                   <p className="text-xs text-red-500">
                     Duties will be charged if applicable
+                  </p>
+                )}
+                {partner.document && (
+                  <p className="text-xs text-red-500">
+                    Documents are not allowed
                   </p>
                 )}
                 <p className="text-sm font-medium text-gray-400">

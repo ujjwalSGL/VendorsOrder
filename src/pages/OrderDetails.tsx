@@ -2,7 +2,7 @@ import SimpleFormField from "@/components/elements/SimpleFormField";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
-import { currencyFrameworks } from "@/lib/constants";
+import { currencyFrameworks, igstFrameworks } from "@/lib/constants";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { UserCheck, FilePen, Plus, MoveLeft, Trash } from "lucide-react";
 import { useForm } from "react-hook-form";
@@ -202,6 +202,7 @@ function OrderDetails({ nextStep, prevStep }: OrderDetailsProps) {
                   required
                   name="invoiceNumber"
                   className="lg:mt-2"
+                  placeholder="Type invoice number . . ."
                 />
 
                 <SimpleFormField
@@ -219,7 +220,7 @@ function OrderDetails({ nextStep, prevStep }: OrderDetailsProps) {
                     name="invoiceCurrency"
                     label="Invoice Currency"
                     required
-                    placeholder="INR"
+                    placeholder="Select . . ."
                     framework={currencyFrameworks}
                   />
                 </div>
@@ -230,6 +231,7 @@ function OrderDetails({ nextStep, prevStep }: OrderDetailsProps) {
                   type="text"
                   required
                   name="orderId"
+                  placeholder="Type order id . . ."
                 />
               </div>
               <div>
@@ -285,11 +287,12 @@ function OrderDetails({ nextStep, prevStep }: OrderDetailsProps) {
                     <SimpleFormField
                       form={orderDetailsForm}
                       label="IGST"
-                      type="number"
+                      type="popover-select"
                       required
                       name={`itemDetails.${index}.IGST`}
                       className="col-span-2 "
                       placeholder="0 %"
+                      framework={igstFrameworks}
                     />
                     <div className="pt-8">
                       {index >= 1 && (
