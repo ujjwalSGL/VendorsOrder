@@ -8,20 +8,6 @@ export const addressFrameworks = [
       "Head OFFICE, mahipalpur, Indira Park, South West Delhi, Delhi-110045-8392328932",
   },
 ];
-export const countryFrameworks = [
-  {
-    value: "australia",
-    label: "Australia",
-  },
-  {
-    value: "usa",
-    label: "USA",
-  },
-  {
-    value: "canada",
-    label: "Canada",
-  },
-];
 export const igstFrameworks = [
   {
     value: "0",
@@ -51,44 +37,36 @@ export const igstFrameworks = [
 
 export const currencyFrameworks = [
   {
-    value: "Dollar",
-    label: "USD",
+    value: "AED",
+    label: "AED",
   },
   {
-    value: "Dollar",
-    label: "USA",
-  },
-  {
-    value: "Canadian Dollar",
-    label: "CAD",
-  },
-  {
-    value: "Euro",
-    label: "EUR",
-  },
-  {
-    value: "United Kingdom",
-    label: "GBP",
-  },
-  {
-    value: "Japan",
-    label: "JPY",
-  },
-  {
-    value: "Australia",
+    value: "AUD",
     label: "AUD",
   },
   {
-    value: "India",
+    value: "CAD",
+    label: "CAD",
+  },
+  {
+    value: "EURO",
+    label: "EUR",
+  },
+  {
+    value: "GBP",
+    label: "GBP",
+  },
+  {
+    value: "INR",
     label: "INR",
   },
   {
-    value: "China",
-    label: "CNY",
+    value: "SAR",
+    label: "SAR",
   },
   {
-    value: "Mexico",
-    label: "MXN",
+    value: "US Dollar",
+    label: "USD",
   },
 ];
 
@@ -196,3 +174,45 @@ export const buyerFormSchema = z.object({
     .nonempty({ message: "The customer shipping first name is required." })
     .max(25),
 });
+
+interface ShippingPartner {
+  id: string;
+  name: string;
+  price: number;
+  transitTime: string;
+  hasDuties?: boolean;
+  recommended?: boolean;
+  document?: boolean;
+}
+
+export const shippingPartners: ShippingPartner[] = [
+  {
+    id: "shipglobal",
+    name: "ShipGlobal Direct",
+    price: 6000,
+    transitTime: "12 - 18 Days",
+    recommended: true,
+    document: true,
+  },
+  {
+    id: "ups-promotional",
+    name: "UPS Promotional",
+    price: 12000,
+    transitTime: "4 - 7 Days",
+    hasDuties: true,
+  },
+  {
+    id: "dhl",
+    name: "DHL Express",
+    price: 15000,
+    transitTime: "4 - 7 Days",
+    hasDuties: true,
+  },
+  {
+    id: "ups",
+    name: "UPS",
+    price: 20000,
+    transitTime: "4 - 7 Days",
+    hasDuties: true,
+  },
+];

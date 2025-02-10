@@ -64,6 +64,7 @@ function OrderDetails({ nextStep, prevStep }: OrderDetailsProps) {
     resolver: zodResolver(orderDetailsSchema),
     defaultValues: InitialOrderDetails,
   });
+
   const handleOrderDetails = (data: OrderDetailsType) => {
     console.log(data);
     localStorage.setItem("OrderDetails", JSON.stringify(data));
@@ -95,6 +96,7 @@ function OrderDetails({ nextStep, prevStep }: OrderDetailsProps) {
       orderDetailsForm.setValue("itemDetails", updatedItems);
     }
   };
+
   return (
     <div className="flex justify-between w-full gap-4">
       <div className="w-full">

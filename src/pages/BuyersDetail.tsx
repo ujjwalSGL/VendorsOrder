@@ -4,16 +4,18 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Label } from "@/components/ui/label";
 import { addressFrameworks, buyerFormSchema } from "@/lib/constants";
-import { countryFrameworks } from "@/lib/constants";
 import { countryStateFrameWork } from "@/lib/constants";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { Form } from "@/components/ui/form";
 import SimpleFormField from "@/components/elements/SimpleFormField";
+import { useCountries, useStates } from "./countryApi";
 
 type BuyerFormType = z.infer<typeof buyerFormSchema>;
 
 function BuyerDetails({ nextStep }: any) {
+  const [addressSame, setAddressSame] = useState(true);
+  const { countries } = useCountries();
   const initialBuyersDetails = {
     firstName: "",
     lastName: "",
@@ -46,13 +48,12 @@ function BuyerDetails({ nextStep }: any) {
     defaultValues: initialBuyersDetails,
   });
 
-  const [addressSame, setAddressSame] = useState(true);
-
   const handleBuyerDetails = (data: BuyerFormType) => {
     console.log(data);
     localStorage.setItem("buyerDetails", JSON.stringify(data));
     nextStep();
   };
+
   const handleAddressCheckbox = () => {
     setAddressSame((prev) => !prev);
   };
@@ -116,6 +117,7 @@ function BuyerDetails({ nextStep }: any) {
       );
     }
   }, [addressSame, buyersDetailsForm, shippingAddress]);
+
 
   return (
     <div className="flex justify-between w-full gap-4">
@@ -189,8 +191,13 @@ function BuyerDetails({ nextStep }: any) {
                   type="popover-select"
                   required
                   name="country"
+                  framework={countries.map(
+                    (country: { name: string; code: string }) => ({
+                      label: country.name,
+                      value: country.code,
+                    })
+                  )}
                   placeholder="Select country . . ."
-                  framework={countryFrameworks}
                 />
               </div>
 
@@ -299,7 +306,12 @@ function BuyerDetails({ nextStep }: any) {
                       required
                       name="billingCountry"
                       placeholder="Select country . . ."
-                      framework={countryFrameworks}
+                      framework={countries.map(
+                        (country: { name: string; code: string }) => ({
+                          label: country.name,
+                          value: country.code,
+                        })
+                      )}
                     />
                   </div>
                   <div className="gap-4 mt-2 space-y-2 lg:grid lg:grid-cols-2">
