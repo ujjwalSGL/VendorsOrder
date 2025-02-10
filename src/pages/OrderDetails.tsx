@@ -2,6 +2,7 @@ import SimpleFormField from "@/components/elements/SimpleFormField";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
+import { currencyFrameworks } from "@/lib/constants";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { UserCheck, FilePen, Plus, MoveLeft, Trash } from "lucide-react";
 import { useForm } from "react-hook-form";
@@ -211,13 +212,17 @@ function OrderDetails({ nextStep, prevStep }: OrderDetailsProps) {
                   name="invoiceDate"
                 />
 
-                <SimpleFormField
-                  form={orderDetailsForm}
-                  label="Invoice Currency"
-                  type="text"
-                  required
-                  name="invoiceCurrency"
-                />
+                <div className="mt-2 space-y-2">
+                  <SimpleFormField
+                    form={orderDetailsForm}
+                    type="popover-select"
+                    name="invoiceCurrency"
+                    label="Invoice Currency"
+                    required
+                    placeholder="INR"
+                    framework={currencyFrameworks}
+                  />
+                </div>
 
                 <SimpleFormField
                   form={orderDetailsForm}
@@ -262,7 +267,7 @@ function OrderDetails({ nextStep, prevStep }: OrderDetailsProps) {
                     />
                     <SimpleFormField
                       form={orderDetailsForm}
-                      label="Quantity"
+                      label="Qty"
                       type="number"
                       required
                       name={`itemDetails.${index}.Qty`}

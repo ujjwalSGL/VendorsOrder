@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Card } from "@/components/ui/card";
-import BuyerDetails from "./BuyersDetails";
+import BuyerDetails from "./BuyersDetail";
 import OrderDetails from "./OrderDetails";
 import ShippingPartner from "./ShippingPartner";
 import PlaceOrder from "./PlaceOrder";
