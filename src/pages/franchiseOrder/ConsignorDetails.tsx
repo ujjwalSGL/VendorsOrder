@@ -6,7 +6,6 @@ import { Form } from "@/components/ui/form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import AccordionStepper from "./AccordionStepper";
 
 function ConsignorDetails() {
   const ConsignorDetailsSchema = z.object({
