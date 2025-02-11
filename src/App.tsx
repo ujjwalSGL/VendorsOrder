@@ -1,9 +1,9 @@
-import Stepper from "./pages/Stepper";
+import AccordionStepper from "./pages/franchiseOrder/AccordionStepper";
 
 function App() {
   return (
     <div>
-      <Stepper />
+      <AccordionStepper />
     </div>
   );
 }

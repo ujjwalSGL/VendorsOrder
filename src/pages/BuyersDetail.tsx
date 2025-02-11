@@ -3,19 +3,24 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Label } from "@/components/ui/label";
-import { addressFrameworks, buyerFormSchema } from "@/lib/constants";
-import { countryStateFrameWork } from "@/lib/constants";
+import { buyerFormSchema } from "@/lib/schema";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { Form } from "@/components/ui/form";
 import SimpleFormField from "@/components/elements/SimpleFormField";
 import { useCountries, useStates } from "./countryApi";
+import { addressFrameworks } from "@/lib/constants";
 
 type BuyerFormType = z.infer<typeof buyerFormSchema>;
 
 function BuyerDetails({ nextStep }: any) {
   const [addressSame, setAddressSame] = useState(true);
   const { countries } = useCountries();
+  const [selectedCountry, setSelectedCountry] = useState("");
+  const [selectedBillingCountry, setSelectedBillingCountry] = useState("");
+  const shippingStates = useStates(selectedCountry);
+  const billingStates = useStates(selectedBillingCountry);
+
   const initialBuyersDetails = {
     firstName: "",
     lastName: "",
@@ -118,6 +123,19 @@ function BuyerDetails({ nextStep }: any) {
     }
   }, [addressSame, buyersDetailsForm, shippingAddress]);
 
+  useEffect(() => {
+    const subscription = buyersDetailsForm.watch((value, { name }) => {
+      if (name === "country") {
+        setSelectedCountry(value.country || "");
+        buyersDetailsForm.setValue("state", "");
+      }
+      if (name === "billingCountry") {
+        setSelectedBillingCountry(value.billingCountry || "");
+        buyersDetailsForm.setValue("billingState", "");
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [buyersDetailsForm]);
 
   return (
     <div className="flex justify-between w-full gap-4">
@@ -250,12 +268,17 @@ function BuyerDetails({ nextStep }: any) {
                 <div className="mt-2 space-y-2">
                   <SimpleFormField
                     form={buyersDetailsForm}
-                    label="Country"
+                    label="State"
                     type="popover-select"
                     required
                     name="state"
                     placeholder="Select state . . ."
-                    framework={countryStateFrameWork}
+                    framework={shippingStates.states.map(
+                      (state: { name: string; code: string }) => ({
+                        label: state.name,
+                        value: state.code,
+                      })
+                    )}
                   />
                 </div>
               </div>
@@ -364,12 +387,17 @@ function BuyerDetails({ nextStep }: any) {
                     <div className="mt-2 space-y-2">
                       <SimpleFormField
                         form={buyersDetailsForm}
-                        label="Country"
+                        label="State"
                         type="popover-select"
                         required
                         name="billingState"
                         placeholder="Select state . . ."
-                        framework={countryStateFrameWork}
+                        framework={billingStates.states.map(
+                          (state: { name: string; code: string }) => ({
+                            label: state.name,
+                            value: state.code,
+                          })
+                        )}
                       />
                     </div>
                   </div>

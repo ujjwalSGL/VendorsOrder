@@ -15,9 +15,6 @@ export const buyerFormSchema = z.object({
     .min(1, { message: "The customer mobile number is required." })
     .max(20),
   alternateMobileNumber: z.string().max(20),
-  pickupAddress: z
-    .string()
-    .nonempty({ message: "The pickup address is required." }),
   email: z
     .string()
     .nonempty({ message: "The email is required." })

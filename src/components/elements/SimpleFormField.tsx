@@ -73,7 +73,7 @@ export default function SimpleFormField({
                     className="w-full rounded-r-none"
                     disabled={disabled}
                   />
-                  <span className="flex items-center justify-center py-1.5 px-2 text-sm border rounded-r-sm bg-slate-100">
+                  <span className="flex items-center justify-center py-1.5 px-2.5 text-sm border rounded-r-sm bg-zinc-200">
                     {valueType}
                   </span>
                 </div>
@@ -101,7 +101,7 @@ export default function SimpleFormField({
                       role="combobox"
                       aria-expanded={open}
                       className={cn(
-                        "justify-between w-full font-medium text-gray-400 bg-slate-50",
+                        "justify-between w-full font-medium",
                         !field.value && "text-muted-foreground"
                       )}
                     >
@@ -110,7 +110,7 @@ export default function SimpleFormField({
                             (option) => option.value === field.value
                           )?.label
                         : placeholder || "Select option"}
-                      <ChevronsUpDown className="w-4 h-4 ml-2 opacity-50 shrink-0" />
+                      <ChevronsUpDown className="w-4 h-4 opacity-50 shrink-0" />
                     </Button>
                   </FormControl>
                 </PopoverTrigger>
