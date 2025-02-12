@@ -9,11 +9,11 @@ import { useForm } from "react-hook-form";
 import { Form } from "@/components/ui/form";
 import SimpleFormField from "@/components/elements/SimpleFormField";
 import { useCountries, useStates } from "@/pages/countryApi";
-import { Card } from "@/components/ui/card";
+import Accordion from "@/components/elements/Accordion";
 
 type BuyerFormType = z.infer<typeof buyerFormSchema>;
 
-function ConsigneeDetails({ nextStep }: any) {
+function ConsigneeDetails({ activeState, setActiveState }: any) {
   const [addressSame, setAddressSame] = useState(true);
   const { countries } = useCountries();
   const [selectedCountry, setSelectedCountry] = useState("");
@@ -54,8 +54,8 @@ function ConsigneeDetails({ nextStep }: any) {
 
   const handleBuyerDetails = (data: BuyerFormType) => {
     console.log(data);
-    localStorage.setItem("buyerDetails", JSON.stringify(data));
-    nextStep();
+    localStorage.setItem("consigneeDetails", JSON.stringify(data));
+    setActiveState(3);
   };
 
   const handleAddressCheckbox = () => {
@@ -137,19 +137,25 @@ function ConsigneeDetails({ nextStep }: any) {
   }, [buyersDetailsForm]);
 
   return (
-    <Card className="w-full gap-4 p-6 ">
-      <div className="w-full">
+    <Accordion
+      title="Consignee Details"
+      stepNum={2}
+      activeState={activeState}
+      setActiveState={setActiveState}
+    >
+      <div className="w-full p-4">
         <Form {...buyersDetailsForm}>
           <form onSubmit={buyersDetailsForm.handleSubmit(handleBuyerDetails)}>
             <h1 className="font-bold">Buyer's Personal Details</h1>
             <div className="space-y-2 text-sm">
-              <div className="gap-4 mt-4 lg:grid lg:grid-cols-3">
+              <div className="gap-4 mt-4 space-y-2 lg:grid lg:grid-cols-3">
                 <SimpleFormField
                   form={buyersDetailsForm}
                   label="First name"
                   type="text"
                   required
                   name="firstName"
+                  className="mt-2"
                   placeholder="First name . . ."
                 />
                 <SimpleFormField
@@ -186,13 +192,14 @@ function ConsigneeDetails({ nextStep }: any) {
                 />
               </div>
               <h1 className="pt-6 text-sm font-bold">Buyer Shipping Details</h1>
-              <div className="gap-4 mt-4 lg:grid lg:grid-cols-3">
+              <div className="gap-4 mt-4 space-y-2 lg:grid lg:grid-cols-3">
                 <SimpleFormField
                   form={buyersDetailsForm}
                   label="Address 1"
                   type="text"
                   required
                   name="address1"
+                  className="mt-2"
                   placeholder="Type address . . ."
                 />
                 <SimpleFormField
@@ -271,12 +278,13 @@ function ConsigneeDetails({ nextStep }: any) {
                   <h1 className="mt-6 text-sm font-bold">
                     Buyer Billing Details
                   </h1>
-                  <div className="gap-4 mt-4 lg:grid lg:grid-cols-3">
+                  <div className="gap-4 mt-4 space-y-2 lg:grid lg:grid-cols-3">
                     <SimpleFormField
                       form={buyersDetailsForm}
                       label="First name"
                       type="text"
                       required
+                      className="mt-2"
                       name="billingFirstName"
                       placeholder="Enter last name . . ."
                     />
@@ -368,11 +376,7 @@ function ConsigneeDetails({ nextStep }: any) {
                 </div>
               )}
               <div className="flex justify-end pt-4">
-                <Button
-                  variant={"secondaryShipping"}
-                  type="submit"
-                  onClick={buyersDetailsForm.handleSubmit(handleBuyerDetails)}
-                >
+                <Button variant={"secondaryShipping"} type="submit">
                   Continue
                 </Button>
               </div>
@@ -380,7 +384,7 @@ function ConsigneeDetails({ nextStep }: any) {
           </form>
         </Form>
       </div>
-    </Card>
+    </Accordion>
   );
 }
 

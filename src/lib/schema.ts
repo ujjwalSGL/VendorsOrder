@@ -12,7 +12,7 @@ export const buyerFormSchema = z.object({
     .max(25),
   mobileNumber: z
     .string()
-    .min(1, { message: "The customer mobile number is required." })
+    .min(10, { message: "The customer mobile number is required." })
     .max(20),
   alternateMobileNumber: z.string().max(20),
   email: z
@@ -63,7 +63,7 @@ export const buyerFormSchema = z.object({
     .max(25),
   billingMobileNumber: z
     .string()
-    .min(1, { message: "The customer mobile number is required." })
+    .min(10, { message: "The customer mobile number is required." })
     .max(20),
   billingAddress1: z
     .string()
@@ -101,7 +101,7 @@ export const orderDetailsSchema = z.object({
     z.object({
       productName: z.string().min(1, "Product Title is required."),
       SKU: z.string().min(1, "SKU is required"),
-      HSN: z.string().min(8, "8 Digit HSN Required"),
+      HSN: z.string().max(8, "8 Digit HSN Required"),
       Qty: z.string().min(1, "Product Qty is required."),
       unitPrice: z.string().min(1, "Product Price is required."),
       IGST: z.string().min(1, "IGST must be a positive number"),

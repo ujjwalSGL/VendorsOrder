@@ -78,7 +78,7 @@ export default function SimpleFormField({
                   </span>
                 </div>
               </FormControl>
-              <FormMessage className="text-xs" />
+              <FormMessage className="text-xs font-semibold" />
             </FormItem>
           )}
         />
@@ -148,7 +148,7 @@ export default function SimpleFormField({
                   </Command>
                 </PopoverContent>
               </Popover>
-              <FormMessage className="text-xs" />
+              <FormMessage className="text-xs font-semibold" />
             </FormItem>
           )}
         />
@@ -172,7 +172,7 @@ export default function SimpleFormField({
                   disabled={disabled}
                 />
               </FormControl>
-              <FormMessage className="text-xs" />
+              <FormMessage className="text-xs font-semibold" />
             </FormItem>
           )}
         />
