@@ -8,7 +8,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { Form } from "@/components/ui/form";
 import SimpleFormField from "@/components/elements/SimpleFormField";
-import { useCountries, useStates } from "./countryApi";
+import { useCountries, useStates } from "./Api";
 import { addressFrameworks } from "@/lib/constants";
 
 type BuyerFormType = z.infer<typeof buyerFormSchema>;

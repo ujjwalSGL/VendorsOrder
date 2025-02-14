@@ -32,7 +32,7 @@ function CustomerDetails({ activeState }: any) {
     <div className="p-2">
       {activeState >= 2 && (
         <div>
-          <Accordion type="single" collapsible>
+          <Accordion type="single" collapsible defaultValue="item-1">
             <AccordionItem value="item-1" className="border rounded-md">
               <AccordionTrigger className="p-4 bg-gray-100 rounded-md">
                 Consignor Details
@@ -63,7 +63,7 @@ function CustomerDetails({ activeState }: any) {
       {activeState >= 3 && (
         <div className="mt-2">
           <div>
-            <Accordion type="single" collapsible>
+            <Accordion type="single" collapsible defaultValue="item-1">
               <AccordionItem value="item-1" className="border rounded-md">
                 <AccordionTrigger className="p-4 bg-gray-100 rounded-md">
                   Consignee Details

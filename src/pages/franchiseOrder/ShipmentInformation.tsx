@@ -7,7 +7,8 @@ import { orderDetailsSchema } from "@/lib/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus, Trash2 } from "lucide-react";
 import { useFieldArray, useForm } from "react-hook-form";
-import z from "zod";
+import type z from "zod";
+import apiClient from "./apiClient";
 
 type OrderDetailsType = z.infer<typeof orderDetailsSchema>;
 
@@ -39,13 +40,70 @@ function ShipmentInformation({ activeState, setActiveState }: any) {
     defaultValues: InitialOrderDetails,
   });
 
-  const handleOrderDetails = (data: OrderDetailsType) => {
-    console.log(data);
-    localStorage.setItem("OrderDetails", JSON.stringify(data));
-    setActiveState(4);
+  const handleOrderDetails = async (data: OrderDetailsType) => {
+    try {
+      const orderPayload = {
+        csbv: "0",
+        currency_code: data.invoiceCurrency,
+        package_weight: data.weight,
+        package_height: data.height,
+        package_length: data.length,
+        package_breadth: data.breath,
+        vendor_order_item: data.itemDetails.map((item) => ({
+          vendor_order_item_name: item.productName,
+          vendor_order_item_sku: item.SKU,
+          vendor_order_item_quantity: Number(item.Qty),
+          vendor_order_item_unit_price: Number(item.unitPrice),
+          vendor_order_item_hsn: item.HSN,
+          vendor_order_item_tax_rate: item.IGST,
+        })),
+      };
+
+      const orderResponse = await apiClient.post(
+        "/orders/validate-order-invoice",
+        orderPayload
+      );
+
+      if (orderResponse.data) {
+        localStorage.setItem("OrderDetails", JSON.stringify(data));
+        console.log("Order verified successfully");
+        const consigneeDetails = JSON.parse(
+          localStorage.getItem("consigneeDetails") || "{}"
+        );
+
+        const shippingRatesPayload = {
+          customer_shipping_postcode: consigneeDetails.pinCode,
+          customer_shipping_country_code: consigneeDetails.country,
+          package_weight: data.weight,
+          package_length: data.length,
+          package_breadth: data.breath,
+          package_height: data.height,
+        };
+
+        const shippingRatesResponse = await apiClient.post(
+          "/orders/get-shipper-rates",
+          shippingRatesPayload
+        );
+
+        if (shippingRatesResponse.data) {
+          localStorage.setItem(
+            "shippingPartnerData",
+            JSON.stringify(shippingRatesResponse.data.data)
+          );
+          console.log("Shipping rates fetched successfully");
+          setActiveState(4);
+        } else {
+          console.log("Failed to fetch shipping rates");
+        }
+      } else {
+        console.log("Order verification failed");
+      }
+    } catch (error) {
+      console.log("Error processing order:", error);
+    }
   };
 
-  const { control } = orderDetailsForm;
+  const { control, watch } = orderDetailsForm;
   const { fields, append, remove } = useFieldArray({
     control,
     name: "itemDetails",
@@ -61,6 +119,14 @@ function ShipmentInformation({ activeState, setActiveState }: any) {
       IGST: "",
     });
   };
+  const itemDetails = watch("itemDetails");
+  const invoiceCurrency = watch("invoiceCurrency") || "INR";
+
+  const totalPrice = itemDetails?.reduce((sum, item) => {
+    const qty = Number(item.Qty) || 0;
+    const unitPrice = Number(item.unitPrice) || 0;
+    return sum + qty * unitPrice;
+  }, 0);
 
   return (
     <Accordion
@@ -151,7 +217,7 @@ function ShipmentInformation({ activeState, setActiveState }: any) {
 
                   <SimpleFormField
                     form={orderDetailsForm}
-                    label="Breath"
+                    label="Breadth"
                     type="dimension"
                     required
                     name="breath"
@@ -248,7 +314,7 @@ function ShipmentInformation({ activeState, setActiveState }: any) {
                     Add Another Product
                   </div>
                   <div className="mt-5 text-base font-bold cursor-pointer">
-                    Total Price : INR 101672.00
+                    Total Price : {invoiceCurrency}: {totalPrice}
                   </div>
                 </div>
                 <div className="flex justify-end mt-10 i">

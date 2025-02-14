@@ -8,7 +8,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { Form } from "@/components/ui/form";
 import SimpleFormField from "@/components/elements/SimpleFormField";
-import { useCountries, useStates } from "@/pages/countryApi";
+import { useCountries, useStates } from "@/pages/Api";
 import Accordion from "@/components/elements/Accordion";
 
 type BuyerFormType = z.infer<typeof buyerFormSchema>;
@@ -123,7 +123,7 @@ function ConsigneeDetails({ activeState, setActiveState }: any) {
   }, [addressSame, buyersDetailsForm, shippingAddress]);
 
   useEffect(() => {
-    const subscription = buyersDetailsForm.watch((value, { name }) => {
+    const countryState = buyersDetailsForm.watch((value, { name }) => {
       if (name === "country") {
         setSelectedCountry(value.country || "");
         buyersDetailsForm.setValue("state", "");
@@ -133,7 +133,7 @@ function ConsigneeDetails({ activeState, setActiveState }: any) {
         buyersDetailsForm.setValue("billingState", "");
       }
     });
-    return () => subscription.unsubscribe();
+    return () => countryState.unsubscribe();
   }, [buyersDetailsForm]);
 
   return (

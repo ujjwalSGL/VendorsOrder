@@ -14,6 +14,7 @@ interface State {
   name: string;
   code: string;
 }
+
 export const useCountries = () => {
   const [countries, setCountries] = useState<Country[]>([]);
   useEffect(() => {
