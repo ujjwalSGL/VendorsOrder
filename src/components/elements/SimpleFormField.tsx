@@ -1,5 +1,3 @@
-"use client";
-
 import {
   FormControl,
   FormField,
@@ -7,6 +5,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,6 +13,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+
 import {
   Command,
   CommandEmpty,
@@ -22,9 +22,10 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import { Check, ChevronsUpDown } from "lucide-react";
+import { CalendarIcon, Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
+import { format } from "date-fns";
 
 interface SimpleFormFieldProps {
   form: any;
@@ -83,6 +84,53 @@ export default function SimpleFormField({
           )}
         />
       );
+    case "date":
+      return (
+        <FormField
+          control={form.control}
+          name={name}
+          render={({ field }) => (
+            <FormItem className={className}>
+              <FormLabel className="text-black">
+                {label} {required && <Required />}
+              </FormLabel>
+              <Popover open={open} onOpenChange={setOpen}>
+                <PopoverTrigger asChild>
+                  <FormControl>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        "w-full pl-3 text-left font-medium",
+                        !field.value && "text-muted-foreground"
+                      )}
+                    >
+                      {field.value ? (
+                        format(new Date(field.value), "PPP")
+                      ) : (
+                        <span>Pick a date...</span>
+                      )}
+                      <CalendarIcon className="w-4 h-4 ml-auto opacity-50" />
+                    </Button>
+                  </FormControl>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={field.value ? new Date(field.value) : undefined}
+                    onSelect={(date) => {
+                      field.onChange(date?.toISOString().split("T")[0]);
+                      setOpen(false);
+                    }}
+                    disabled={(date) => date > new Date()}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+              <FormMessage className="text-xs font-semibold" />
+            </FormItem>
+          )}
+        />
+      );
     case "popover-select":
       return (
         <FormField
@@ -105,17 +153,19 @@ export default function SimpleFormField({
                         !field.value && "text-muted-foreground"
                       )}
                     >
-                      {field.value
-                        ? framework?.find(
-                            (option) => option.value === field.value
-                          )?.label
-                        : placeholder || "Select option"}
-                      <ChevronsUpDown className="w-4 h-4 opacity-50 shrink-0" />
+                      <span className="truncate">
+                        {field.value
+                          ? framework?.find(
+                              (option) => option.value === field.value
+                            )?.label
+                          : placeholder || "Select option"}
+                      </span>
+                      <ChevronsUpDown className="w-4 h-4 ml-2 opacity-50 shrink-0" />
                     </Button>
                   </FormControl>
                 </PopoverTrigger>
-                <PopoverContent className="w-full p-0">
-                  <Command>
+                <PopoverContent className="w-full p-0 max-w-96">
+                  <Command className="overflow-y-auto max-h-96">
                     <CommandInput placeholder={placeholder} />
                     <CommandList>
                       <CommandEmpty>No option found.</CommandEmpty>
@@ -140,7 +190,7 @@ export default function SimpleFormField({
                                   : "opacity-0"
                               )}
                             />
-                            {option.label}
+                            <span className="truncate">{option.label}</span>
                           </CommandItem>
                         ))}
                       </CommandGroup>
@@ -153,6 +203,43 @@ export default function SimpleFormField({
           )}
         />
       );
+    // case "checkbox":
+    //   return (
+    //     <FormField
+    //       control={form.control}
+    //       name={name}
+    //       render={({ field }) => (
+    //         <FormItem>
+    //           <div className="space-y-2">
+    //             {options.map((option, id) => (
+    //               <div key={id} className="flex items-center space-x-2">
+    //                 <FormControl>
+    //                   <Checkbox
+    //                     checked={field.value?.includes(option)}
+    //                     onCheckedChange={(checked) => {
+    //                       const currentAnswers = field.value || [];
+    //                       const newAnswers = checked
+    //                         ? [...currentAnswers, option]
+    //                         : currentAnswers.filter(
+    //                             (ans: string) => ans !== option
+    //                           );
+    //                       field.onChange(newAnswers);
+    //                       onChange?.(newAnswers);
+    //                     }}
+    //                   />
+    //                 </FormControl>
+    //                 <FormLabel className="text-sm font-normal">
+    //                   {option}
+    //                 </FormLabel>
+    //               </div>
+    //             ))}
+    //           </div>
+    //           <FormMessage />
+    //         </FormItem>
+    //       )}
+    //     />
+    //   );
+
     default:
       return (
         <FormField

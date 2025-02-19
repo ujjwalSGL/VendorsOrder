@@ -9,35 +9,45 @@ import { Plus, Trash2 } from "lucide-react";
 import { useFieldArray, useForm } from "react-hook-form";
 import type z from "zod";
 import apiClient from "./apiClient";
+import { useState } from "react";
 
 type OrderDetailsType = z.infer<typeof orderDetailsSchema>;
 
-function ShipmentInformation({ activeState, setActiveState }: any) {
-  const InitialOrderDetails = {
-    weight: 0,
-    length: 0,
-    height: 0,
-    breath: 0,
-    invoiceNumber: "",
-    invoiceDate: new Date(),
-    invoiceCurrency: "",
-    orderId: "",
-    IOSSNumber: "",
-    itemDetails: [
-      {
-        productName: "",
-        SKU: "",
-        HSN: "",
-        Qty: "",
-        unitPrice: "",
-        IGST: "",
-      },
-    ],
-  };
+function ShipmentInformation({
+  activeState,
+  setActiveState,
+  formData,
+  setFormData,
+}: any) {
+  const [validateOrderMessage, setValidateOrderMessage] = useState("");
+  const [validateOrder, setValidateOrder] = useState(false);
+
+  // const InitialOrderDetails = {
+  //   weight: "",
+  //   length: "",
+  //   height: "",
+  //   breath: "",
+  //   invoiceNumber: "",
+  //   invoiceDate: new Date(),
+  //   invoiceCurrency: "",
+  //   orderId: "",
+  //   IOSSNumber: "",
+  //   itemDetails: [
+  //     {
+  //       productName: "",
+  //       SKU: "",
+  //       HSN: "",
+  //       Qty: "",
+  //       unitPrice: "",
+  //       IGST: "",
+  //     },
+  //   ],
+  // };
 
   const orderDetailsForm = useForm<OrderDetailsType>({
     resolver: zodResolver(orderDetailsSchema),
-    defaultValues: InitialOrderDetails,
+    defaultValues: formData.ShipmentInformation,
+    //  InitialOrderDetails,
   });
 
   const handleOrderDetails = async (data: OrderDetailsType) => {
@@ -45,10 +55,10 @@ function ShipmentInformation({ activeState, setActiveState }: any) {
       const orderPayload = {
         csbv: "0",
         currency_code: data.invoiceCurrency,
-        package_weight: data.weight,
-        package_height: data.height,
-        package_length: data.length,
-        package_breadth: data.breath,
+        package_weight: Number(data.weight),
+        package_height: Number(data.height),
+        package_length: Number(data.length),
+        package_breadth: Number(data.breath),
         vendor_order_item: data.itemDetails.map((item) => ({
           vendor_order_item_name: item.productName,
           vendor_order_item_sku: item.SKU,
@@ -63,43 +73,55 @@ function ShipmentInformation({ activeState, setActiveState }: any) {
         "/orders/validate-order-invoice",
         orderPayload
       );
+      console.log("Order verification response:", orderResponse.data);
 
-      if (orderResponse.data) {
-        localStorage.setItem("OrderDetails", JSON.stringify(data));
-        console.log("Order verified successfully");
-        const consigneeDetails = JSON.parse(
-          localStorage.getItem("consigneeDetails") || "{}"
-        );
-
-        const shippingRatesPayload = {
-          customer_shipping_postcode: consigneeDetails.pinCode,
-          customer_shipping_country_code: consigneeDetails.country,
-          package_weight: data.weight,
-          package_length: data.length,
-          package_breadth: data.breath,
-          package_height: data.height,
-        };
-
-        const shippingRatesResponse = await apiClient.post(
-          "/orders/get-shipper-rates",
-          shippingRatesPayload
-        );
-
-        if (shippingRatesResponse.data) {
-          localStorage.setItem(
-            "shippingPartnerData",
-            JSON.stringify(shippingRatesResponse.data.data)
-          );
-          console.log("Shipping rates fetched successfully");
-          setActiveState(4);
-        } else {
-          console.log("Failed to fetch shipping rates");
-        }
-      } else {
-        console.log("Order verification failed");
+      if (!orderResponse.data) {
+        throw new Error("Order validation failed");
       }
-    } catch (error) {
-      console.log("Error processing order:", error);
+
+      setFormData((prev: any) => ({
+        ...prev,
+        ShipmentInformation: {
+          ...prev.ShipmentInformation,
+          ...data,
+        },
+      }));
+
+      const shippingRatesPayload = {
+        customer_shipping_postcode: formData.ConsigneeDetails.pinCode,
+        customer_shipping_country_code: formData.ConsigneeDetails.country,
+        package_weight: Number(data.weight),
+        package_length: Number(data.length),
+        package_breadth: Number(data.breath),
+        package_height: Number(data.height),
+      };
+
+      const shippingRatesResponse = await apiClient.post(
+        "/orders/get-shipper-rates",
+        shippingRatesPayload
+      );
+      console.log("Shipping rates response:", shippingRatesResponse.data);
+
+      if (!shippingRatesResponse.data?.data) {
+        throw new Error("Failed to fetch shipping rates");
+      }
+      setFormData((prev: any) => ({
+        ...prev,
+        ShippingPartner: {
+          ...prev.ShippingPartner,
+          shippingRates: shippingRatesResponse.data.data,
+        },
+      }));
+
+      setValidateOrder(false);
+      setValidateOrderMessage("");
+      setActiveState(4);
+    } catch (error: any) {
+      console.error("Error processing order details:", error);
+      setValidateOrder(true);
+      setValidateOrderMessage(
+        error.response?.data?.message || "An unexpected error occurred"
+      );
     }
   };
 
@@ -304,6 +326,15 @@ function ShipmentInformation({ activeState, setActiveState }: any) {
                       )}
                     </div>
                   ))}
+                </div>
+                <div>
+                  {validateOrder ? (
+                    <p className="m-2 text-xs font-semibold text-red-500">
+                      {validateOrderMessage}
+                    </p>
+                  ) : (
+                    ""
+                  )}
                 </div>
                 <div className="flex items-center justify-between">
                   <div

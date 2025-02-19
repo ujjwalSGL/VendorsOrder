@@ -34,6 +34,7 @@ export const buyerFormSchema = z.object({
     .string()
     .nonempty({ message: "The customer billing country is required." })
     .max(25),
+  addressSame: z.boolean(),
   state: z
     .string()
     .nonempty({ message: "The customer shipping first name is required." }),
@@ -69,10 +70,7 @@ export const buyerFormSchema = z.object({
     .string()
     .max(100)
     .nonempty({ message: "The customer shipping first name is required." }),
-  billingAddress2: z
-    .string()
-    .nonempty({ message: "The customer shipping first name is required." })
-    .max(100),
+  billingAddress2: z.string().max(100),
   billingCountry: z
     .string()
     .nonempty({ message: "The customer billing country is required." })
@@ -88,10 +86,10 @@ export const buyerFormSchema = z.object({
 
 //Order Details Schema
 export const orderDetailsSchema = z.object({
-  weight: z.coerce.number().min(1, "The package weight is required."),
-  length: z.coerce.number().min(1, "The package length is required."),
-  height: z.coerce.number().min(1, "The package breadth is required."),
-  breath: z.coerce.number().min(1, "The package height is required."),
+  weight: z.string().min(1, "The package weight is required."),
+  length: z.string().min(1, "The package length is required."),
+  height: z.string().min(1, "The package breadth is required."),
+  breath: z.string().min(1, "The package height is required."),
   invoiceNumber: z.string().min(1, "The invoice number is required."),
   invoiceDate: z.coerce.date(),
   invoiceCurrency: z.string().min(1, "Invoice currency is required"),
@@ -101,10 +99,21 @@ export const orderDetailsSchema = z.object({
     z.object({
       productName: z.string().min(1, "Product Title is required."),
       SKU: z.string().min(1, "SKU is required"),
-      HSN: z.string().max(8, "8 Digit HSN Required"),
+      HSN: z
+        .string()
+        .min(8, "8 Digit HSN Required")
+        .max(8, "8 Digit HSN Required"),
       Qty: z.string().min(1, "Product Qty is required."),
       unitPrice: z.string().min(1, "Product Price is required."),
       IGST: z.string().min(1, "IGST must be a positive number"),
     })
   ),
+});
+
+//consignor Details Schema
+
+export const ConsignorDetailsSchema = z.object({
+  pickupAddress: z
+    .string()
+    .nonempty({ message: "The pickup address is required." }),
 });

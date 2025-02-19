@@ -13,7 +13,12 @@ import Accordion from "@/components/elements/Accordion";
 
 type BuyerFormType = z.infer<typeof buyerFormSchema>;
 
-function ConsigneeDetails({ activeState, setActiveState }: any) {
+function ConsigneeDetails({
+  activeState,
+  setActiveState,
+  formData,
+  setFormData,
+}: any) {
   const [addressSame, setAddressSame] = useState(true);
   const { countries } = useCountries();
   const [selectedCountry, setSelectedCountry] = useState("");
@@ -21,45 +26,54 @@ function ConsigneeDetails({ activeState, setActiveState }: any) {
   const shippingStates = useStates(selectedCountry);
   const billingStates = useStates(selectedBillingCountry);
 
-  const initialBuyersDetails = {
-    firstName: "",
-    lastName: "",
-    mobileNumber: "",
-    email: "",
-    address1: "",
-    address2: "",
-    pinCode: "",
-    city: "",
-    landmark: "",
-    country: "",
-    alternateMobileNumber: "",
-    state: "",
-    addressSame: false,
-    billingFirstName: "",
-    billingLastName: "",
-    billingMobileNumber: "",
-    billingPinCode: "",
-    billingCity: "",
-    billingCountry: "",
-    billingAddress2: "",
-    billingAddress1: "",
-    billingState: "",
-    billingLandmark: "",
-  };
+  // const initialBuyersDetails = {
+  //   firstName: "",
+  //   lastName: "",
+  //   mobileNumber: "",
+  //   email: "",
+  //   address1: "",
+  //   address2: "",
+  //   pinCode: "",
+  //   city: "",
+  //   landmark: "",
+  //   country: "",
+  //   alternateMobileNumber: "",
+  //   state: "",
+  //   addressSame: addressSame,
+  //   billingFirstName: "",
+  //   billingLastName: "",
+  //   billingMobileNumber: "",
+  //   billingPinCode: "",
+  //   billingCity: "",
+  //   billingCountry: "",
+  //   billingAddress2: "",
+  //   billingAddress1: "",
+  //   billingState: "",
+  //   billingLandmark: "",
+  // };
 
   const buyersDetailsForm = useForm<BuyerFormType>({
     resolver: zodResolver(buyerFormSchema),
-    defaultValues: initialBuyersDetails,
+    defaultValues: formData.ConsigneeDetails,
+    // initialBuyersDetails,
   });
 
   const handleBuyerDetails = (data: BuyerFormType) => {
-    console.log(data);
-    localStorage.setItem("consigneeDetails", JSON.stringify(data));
+    // console.log(data);
+    // localStorage.setItem("consigneeDetails", JSON.stringify(data));
+    setFormData((prev: any) => ({
+      ...prev,
+      ConsigneeDetails: {
+        ...prev.ConsigneeDetails,
+        ...data,
+      },
+    }));
     setActiveState(3);
   };
 
   const handleAddressCheckbox = () => {
-    setAddressSame((prev) => !prev);
+    setAddressSame(!addressSame);
+    console.log(addressSame);
   };
 
   const shippingAddress = buyersDetailsForm.watch([
@@ -75,6 +89,7 @@ function ConsigneeDetails({ activeState, setActiveState }: any) {
     "pinCode",
     "city",
     "state",
+    "addressSame",
   ]);
 
   useEffect(() => {
@@ -265,7 +280,7 @@ function ConsigneeDetails({ activeState, setActiveState }: any) {
               </div>
               <div className="flex items-center pt-3 my-6 space-x-2">
                 <Checkbox
-                  id="terms"
+                  id="addressSame"
                   checked={addressSame}
                   onCheckedChange={handleAddressCheckbox}
                 />
@@ -316,7 +331,6 @@ function ConsigneeDetails({ activeState, setActiveState }: any) {
                       form={buyersDetailsForm}
                       label="Address 2"
                       type="text"
-                      required
                       name="billingAddress2"
                       placeholder="Enter Address 2 . . ."
                     />

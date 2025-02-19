@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import clsx from "clsx";
-import { Check } from "lucide-react";
 const Accordion = ({
   title,
   children,
